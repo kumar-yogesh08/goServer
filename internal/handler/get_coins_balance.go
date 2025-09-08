@@ -12,16 +12,16 @@ import (
 
 func GetCoinBalance(w http.ResponseWriter, r *http.Request) {
 
-	var params = api.CoinBalanceParam{}
+	var params api.CoinBalanceParam
 	var decoder *schema.Decoder = schema.NewDecoder()
 	var err error
-	err = decoder.Decode(params, r.URL.Query())
+	err = decoder.Decode(&params, r.URL.Query())
 	if err != nil {
 		log.Error(err.Error())
 		api.IntenalErrorHandler(w)
 		return
 	}
-	var database *tool.DatabaseInterface
+	var database tools.DatabaseInterface
 	database, err = tools.NewDatabase()
 	if err != nil {
 		log.Error(err.Error())
@@ -29,9 +29,7 @@ func GetCoinBalance(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	var tokenDetails *tools.CoinDetails
-
-	tokenDetails = (*database).GetCoinBalance(params.UserName)
+	tokenDetails := (database).GetCoinBalance(params.UserName)
 	if tokenDetails == nil {
 		log.Error(err)
 		api.IntenalErrorHandler(w)
